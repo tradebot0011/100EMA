@@ -1,7 +1,12 @@
 FROM golang:1.22-alpine AS builder
 WORKDIR /app
-COPY go.mod go.sum ./
-RUN go mod download
+
+# Copy module definition
+COPY go.mod ./
+
+# Clear cache and fetch fresh checksums inside the container
+RUN go mod tidy
+
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o trading-bot main.go
 
